@@ -75,7 +75,7 @@ public class HttpClientHelper {
             // 设置通用的请求属性
             connection.setRequestProperty("accept", "*/*");
             connection.setRequestProperty("connection", "Keep-Alive");
-            connection.setRequestProperty("");
+//            connection.setRequestProperty("");
             // 建立实际的连接
             connection.connect();
             // 获取所有响应头字段
@@ -83,10 +83,11 @@ public class HttpClientHelper {
 
             // 定义 BufferedReader输入流来读取URL的响应
             in = new BufferedReader(new InputStreamReader(
-                    connection.getInputStream()));
+                    connection.getInputStream(), "utf-8"));
             String line;
             while ((line = in.readLine()) != null) {
                 result += line;
+
             }
         } catch (Exception e) {
             System.out.println("发送GET请求出现异常！" + e);

@@ -1,1 +1,7 @@
 # Created by .ignore support plugin (hsz.mobi)
+/target
+
+.idea/inspectionProfiles/
+src/main/resources/
+src/test/
+target/

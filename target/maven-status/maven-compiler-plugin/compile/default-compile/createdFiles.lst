@@ -2,4 +2,5 @@ ExcelWriter.class
 HttpClientHelper.class
 Main.class
 HtmlParser.class
+HtmlParserProInfo.class
 MyX509TrustManager.class

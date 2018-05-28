@@ -325,10 +325,10 @@ public class ExcelWriter {
                 //trade date
                 newRow.createCell(2).setCellValue(dates.get(rowId));
                 List<String> cols = dataMap.get(HtmlParser.monthIds.get(rowId));
-                if (cols == null || cols.isEmpty()){
+                if (cols == null || cols.isEmpty()) {
                     continue;
                 }
-                for (short columnIndex = 0; columnIndex < columnCount - 3 && columnIndex <cols.size(); columnIndex++) {  //遍历表头
+                for (short columnIndex = 0; columnIndex < columnCount - 3 && columnIndex < cols.size(); columnIndex++) {  //遍历表头
                     HSSFCell cell = newRow.createCell(columnIndex + 3, 0);
                     if (cols.get(columnIndex) != null && !cols.get(columnIndex).isEmpty()) {
                         cell.setCellValue(Double.valueOf(cols.get(columnIndex)));
@@ -352,18 +352,96 @@ public class ExcelWriter {
         }
     }
 
+    /**
+     * @param fileDir
+     * @param sheetName
+     * @param projectInfo
+     *
+     * @throws Exception
+     */
+    public static void writeToExcel(String fileDir, String sheetName,
+                                    Map<String, List<String>> projectInfo) throws Exception {
+        //创建workbook
+        File file = new File(fileDir);
+        try {
+            workbook = new HSSFWorkbook(new FileInputStream(file));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //流
+        FileOutputStream out = null;
+        HSSFSheet sheet = workbook.getSheet(sheetName);
+        HSSFFont font = workbook.createFont();
+        font.setCharSet(HSSFFont.DEFAULT_CHARSET);
+        font.setFontName("宋体");
+        font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+        HSSFCellStyle cellStyle = workbook.createCellStyle();
+        cellStyle.setFont(font);
+        //        cellStyle.setFillBackgroundColor(BLUE.index);
+        // 获取表格的总行数
+
+        // 获取表头的列数
+
+        for (Map.Entry<String, List<String>> entry : projectInfo.entrySet()) {
+            int rowCount = sheet.getLastRowNum(); // 需要加一
+            System.out.println("current line is " + rowCount);
+            for (int rowId = 0; rowId < 3; rowId++) {
+
+                HSSFRow newRow = sheet.createRow(rowId + rowCount + 1);
+                //company name
+                if (rowId % 3 == 0) {
+                    newRow.createCell(0).setCellValue(entry.getKey());
+                } else if (rowId % 3 == 1) {
+                    for (int i = 0; i < entry.getValue().size() / 2; i++) {
+                        newRow.createCell(i).setCellValue(entry.getValue().get(2 * i));
+                    }
+                } else {
+                    for (int i = 0; i < entry.getValue().size() / 2; i++) {
+                        newRow.createCell(i).setCellValue(entry.getValue().get(2 * i + 1));
+                    }
+                }
+            }
+        }
+        try {
+            out = new FileOutputStream(fileDir);
+            workbook.write(out);
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            try {
+                out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         //        判断文件是否存在
         //        System.out.println(sheetExist("./src/main/resources/Book1.xls", "Sheet1"));
-                getNameAndNo();
-                Set<String> companyIDs = HtmlParser.getAllCompanyIds();
-                for (String id : companyIDs) {
-                    if (nameAndNo.get(id.trim().toUpperCase()) != null) {
-                        System.out.println("success" + nameAndNo.get(id.trim().toUpperCase()));
-                    } else {
-                        System.out.println("fail" + id);
-                    }
-                }
+        //                getNameAndNo();
+        //                Set<String> companyIDs = HtmlParser.getAllCompanyIds();
+        //                for (String id : companyIDs) {
+        //                    if (nameAndNo.get(id.trim().toUpperCase()) != null) {
+        //                        System.out.println("success" + nameAndNo.get(id.trim().toUpperCase()));
+        //                    } else {
+        //                        System.out.println("fail" + id);
+        //                    }
+        //                }
+
+
+        ExcelWriter.createExcel("./test1.xls", "sheet1", title);
+        Map<String, List<String>> map = new HashMap<String, List<String>>();
+        List<String> list = new ArrayList<String>();
+        list.add("a");
+        list.add("b");
+        list.add("c");
+        list.add("d");
+        map.put("key", list);
+        map.put("key1", list);
+        writeToExcel("./test1.xls", "sheet1", map);
 
     }
 }

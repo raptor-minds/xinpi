@@ -7,11 +7,11 @@ import java.util.*;
 
 public class HtmlParser {
 
-    private static String test = "http://221.238.206.9/publicnifa/HomePage?method=getPublishedInfo";
-//    private static String baseUrl = "https://dp.nifa.org.cn/HomePage?method=getTargetOrgInfo&sorganation=";
-//    private static String originUrl = "https://dp.nifa.org.cn/HomePage?method=getOperateInfo&currentPage=";
-    private static String baseUrl = "http://221.238.206.9/publicnifa/HomePage?method=getTargetOrgInfo&sorganation=";
-    private static String originUrl = "http://221.238.206.9/publicnifa/HomePage?method=getOperateInfo&currentPage=";
+//    private static String test = "http://221.238.206.9/publicnifa/HomePage?method=getPublishedInfo";
+    private static String baseUrl = "https://dp2.nifa.org.cn/HomePage?method=getTargetOrgInfo&sorganation=";
+    private static String originUrl = "https://dp2.nifa.org.cn/HomePage?method=getOperateInfo&currentPage=";
+//    private static String baseUrl = "http://221.238.206.9/publicnifa/HomePage?method=getTargetOrgInfo&sorganation=";
+//    private static String originUrl = "http://221.238.206.9/publicnifa/HomePage?method=getOperateInfo&currentPage=";
     public static int succeedNum = 0;
     public static int failNum = 0;
     public static Set<String> badCompany = new HashSet<String>();
@@ -20,8 +20,8 @@ public class HtmlParser {
 
     private static Set<String> getSinglePageCompanyNo(int page) {
         Set<String> companyIds = new HashSet<String>();
-//        String result = HttpClientHelper.httpsRequest(originUrl + page, "GET",null);
-        String result = HttpClientHelper.sendGet(originUrl + page,null);
+        String result = HttpClientHelper.httpsRequest(originUrl + page, "GET",null);
+//        String result = HttpClientHelper.sendGet(originUrl + page,null);
         Document doc = Jsoup.parse(result);
 
         Elements divs = doc.select("tbody#runinfotbody").select("a");
@@ -57,13 +57,13 @@ public class HtmlParser {
     }
 
     public static void parseOneInstitute(String url) {
-//        String result = HttpClientHelper.httpsRequest(
-//                baseUrl + url, "GET",
-//                 null);
+        String result = HttpClientHelper.httpsRequest(
+                baseUrl + url, "GET",
+                 null);
 
-        String result = HttpClientHelper.sendGet(
-                baseUrl + url,
-                null);
+//        String result = HttpClientHelper.sendGet(
+//                baseUrl + url,
+//                null);
 
         Document doc = (Document) Jsoup.parse(result);
 
