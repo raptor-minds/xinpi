@@ -75,7 +75,6 @@ public class HttpClientHelper {
             // 设置通用的请求属性
             connection.setRequestProperty("accept", "*/*");
             connection.setRequestProperty("connection", "Keep-Alive");
-            connection.setRequestProperty("");
             // 建立实际的连接
             connection.connect();
             // 获取所有响应头字段
