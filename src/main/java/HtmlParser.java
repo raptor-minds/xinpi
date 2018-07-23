@@ -7,11 +7,9 @@ import java.util.*;
 
 public class HtmlParser {
 
-    private static String test = "http://221.238.206.9/publicnifa/HomePage?method=getPublishedInfo";
-//    private static String baseUrl = "https://dp.nifa.org.cn/HomePage?method=getTargetOrgInfo&sorganation=";
-//    private static String originUrl = "https://dp.nifa.org.cn/HomePage?method=getOperateInfo&currentPage=";
-    private static String baseUrl = "http://221.238.206.9/publicnifa/HomePage?method=getTargetOrgInfo&sorganation=";
-    private static String originUrl = "http://221.238.206.9/publicnifa/HomePage?method=getOperateInfo&currentPage=";
+    private static String domainName = "dp2.nifa.org.cn";
+    private static String baseUrl = "http://" + domainName + "/publicnifa/HomePage?method=getTargetOrgInfo&sorganation=";
+    private static String originUrl = "http://" + domainName + "/publicnifa/HomePage?method=getOperateInfo&currentPage=";
     public static int succeedNum = 0;
     public static int failNum = 0;
     public static Set<String> badCompany = new HashSet<String>();
@@ -126,7 +124,10 @@ public class HtmlParser {
 
     public static void main(String[] args) {
 
+        ExcelWriter.getHtmlPageNo();
+        List<String> title = ExcelWriter.getTitle();
+        ExcelWriter.getDateInfo();
         System.out.println(getSinglePageCompanyNo(1));
-//        writeAllCompanyInfo();
+        writeAllCompanyInfo();
     }
 }
