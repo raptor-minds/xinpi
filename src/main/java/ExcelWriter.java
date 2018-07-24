@@ -5,7 +5,6 @@ import java.util.*;
 
 public class ExcelWriter {
     private static HSSFWorkbook workbook = null;
-    public static Map<String, String> nameAndNo = new HashMap<String, String>();
     public static List<String> title = new ArrayList<String>();
     public static List<String> dates = new ArrayList<String>();
     private static int monthNums = 0;
@@ -82,33 +81,6 @@ public class ExcelWriter {
 
         htmlPageNo = (int) sheet.getRow(0).getCell(0).getNumericCellValue();
         return htmlPageNo;
-    }
-
-    public static Map<String, String> getNameAndNo() {
-
-        File file = new File("./companyNames.xls");
-        if (!file.exists()) {
-            System.out.println("companyNames doesn't exist.");
-        }
-        HSSFWorkbook workbook = null;
-        try {
-            workbook = new HSSFWorkbook(new FileInputStream(file));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        //流
-        FileOutputStream out = null;
-        HSSFSheet sheet = workbook.getSheet("sheet1");
-        // 获取表格的总行数
-        int rowCount = sheet.getLastRowNum() + 1; // 需要加一
-
-        for (int i = 0; i < rowCount; i++) {
-            if (sheet.getRow(i) != null && !sheet.getRow(i).getCell(0).getStringCellValue().isEmpty()) {
-                nameAndNo.put(sheet.getRow(i).getCell(1).getStringCellValue().trim().toUpperCase(),
-                        sheet.getRow(i).getCell(0).getStringCellValue().trim());
-            }
-        }
-        return nameAndNo;
     }
 
     /**
@@ -280,7 +252,7 @@ public class ExcelWriter {
 
     public static void writeToExcel(String fileDir, String sheetName,
                                     Map<Integer, List<String>> dataMap,
-                                    List<String> companyNames, List<String> dates) throws Exception {
+                                    List<String> companyIDs, List<String> dates, String companyName) throws Exception {
         //创建workbook
         File file = new File(fileDir);
         try {
@@ -313,10 +285,10 @@ public class ExcelWriter {
                 HSSFRow newRow = sheet.createRow(rowId + rowCount + 1);
                 //company name
                 if (rowId % 3 == 0) {
-                    String companyId = companyNames.get((rowId / monthNums)).trim().toUpperCase();
+                    String companyId = companyIDs.get((rowId / monthNums)).trim().toUpperCase();
                     HSSFCell cell = newRow.createCell(0);
                     cell.setCellStyle(cellStyle);
-                    cell.setCellValue(nameAndNo.get(companyId));
+                    cell.setCellValue(companyName);
                     newRow.createCell(1).setCellValue(companyId);
                 } else {
                     newRow.createCell(0).setCellValue("");
@@ -354,16 +326,7 @@ public class ExcelWriter {
 
     public static void main(String[] args) throws Exception {
         //        判断文件是否存在
-        //        System.out.println(sheetExist("./src/main/resources/Book1.xls", "Sheet1"));
-                getNameAndNo();
-                Set<String> companyIDs = HtmlParser.getAllCompanyIds();
-                for (String id : companyIDs) {
-                    if (nameAndNo.get(id.trim().toUpperCase()) != null) {
-                        System.out.println("success" + nameAndNo.get(id.trim().toUpperCase()));
-                    } else {
-                        System.out.println("fail" + id);
-                    }
-                }
+        //        System.out.println(sheetExist("./src/main/resources/Book1.xls", "Sheet1"))
 
     }
 }

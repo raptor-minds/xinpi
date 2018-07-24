@@ -8,7 +8,7 @@ import java.util.*;
 public class HtmlParser {
 
     private static String domainName = "dp2.nifa.org.cn";
-    private static String baseUrl = "http://" + domainName + "/publicnifa/HomePage?method=getTargetOrgInfo&sorganation=";
+    private static String baseUrl = "http://" + domainName + "/HomePage?method=getTargetOrgInfo&sorganation=";
     private static String originUrl = "http://" + domainName + "/publicnifa/HomePage?method=getOperateInfo&currentPage=";
     public static int succeedNum = 0;
     public static int failNum = 0;
@@ -60,17 +60,18 @@ public class HtmlParser {
 //                 null);
 
         String result = HttpClientHelper.sendGet(
-                baseUrl + url,
+                baseUrl + url + "&location=yy#come%20here",
                 null);
 
         Document doc = (Document) Jsoup.parse(result);
+        Elements divBaseInfo = doc.select("div#base-info");
+        String companyName = divBaseInfo.select("tr").get(1).select("td").get(1).text().trim();
 
-        Elements divs = doc.select("div#site-plate");
+//        String companyName = "hello";
         List<String> comNames = new LinkedList<String>();
-        //String companyName = divs.select("tr").get(1).select("td").get(1).text();
-        String companyName = url;
-        comNames.add(companyName);
-        System.out.println("processing " + companyName + " " + ExcelWriter.nameAndNo.get(companyName.trim().toUpperCase()) + " ...");
+        String companyId = url;
+        comNames.add(companyId);
+        System.out.println("processing " + companyId + " " + companyName + " ...");
 
 
         Map<Integer, List<String>> tradeListMap = new HashMap<Integer, List<String>>();
@@ -106,28 +107,29 @@ public class HtmlParser {
         }
 
         if (!tradeListMap.isEmpty()){
-            allCompany.add(companyName);
+            allCompany.add(companyId);
         }
 
         try {
             ExcelWriter.writeToExcel("./test2.xls", "sheet1",
-                    tradeListMap, comNames, dates);
-            System.out.println("successfully processed " + companyName + " " + ExcelWriter.nameAndNo.get(companyName.trim().toUpperCase()) + ".");
+                    tradeListMap, comNames, dates, companyName);
+            System.out.println("successfully processed " + companyId + " " + companyName  + ".");
             succeedNum++;
         } catch (Exception e) {
             e.printStackTrace();
             failNum++;
-            badCompany.add(companyName + " " + ExcelWriter.nameAndNo.get(companyName.trim().toUpperCase()));
+            badCompany.add(companyId + " " + companyName);
         }
         monthIds.clear();
     }
 
     public static void main(String[] args) {
 
-        ExcelWriter.getHtmlPageNo();
-        List<String> title = ExcelWriter.getTitle();
-        ExcelWriter.getDateInfo();
-        System.out.println(getSinglePageCompanyNo(1));
-        writeAllCompanyInfo();
+//        ExcelWriter.getHtmlPageNo();
+//        List<String> title = ExcelWriter.getTitle();
+//        ExcelWriter.getDateInfo();
+//        System.out.println(getSinglePageCompanyNo(1));
+//        writeAllCompanyInfo();
+        HtmlParser.parseOneInstitute("91110000095356957P");
     }
 }

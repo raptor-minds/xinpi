@@ -25,9 +25,8 @@ public class Main {
 
         ExcelWriter.createExcel("./test2.xls", "sheet1", title);
 
-        System.out.println(ExcelWriter.getNameAndNo());
-//        HtmlParser.parseOneInstitute("91310114320741086K");
-        HtmlParser.writeAllCompanyInfo();
+        HtmlParser.parseOneInstitute("91110000095356957P");
+//        HtmlParser.writeAllCompanyInfo();
         System.out.println("-------------SUMMARY------------");
         int total = HtmlParser.succeedNum + HtmlParser.failNum;
         System.out.println("TOTAL COMPANY NUM: " +total);
@@ -37,11 +36,11 @@ public class Main {
 
         Set<String> allCompany = HtmlParser.allCompany; // processed companies
         Set<String> company = new HashSet<String>();
-        for(String temp : ExcelWriter.getNameAndNo().keySet()){
-            if(!allCompany.contains(temp)){
-                System.out.println("!!!" + ExcelWriter.getNameAndNo().get(temp));
-            }
-        }
+//        for(String temp : ExcelWriter.getNameAndNo().keySet()){
+//            if(!allCompany.contains(temp)){
+//                System.out.println("!!!" + ExcelWriter.getNameAndNo().get(temp));
+//            }
+//        }
         HtmlParser.allCompany.clear();
         HtmlParser.succeedNum = 0;
         HtmlParser.failNum = 0;
