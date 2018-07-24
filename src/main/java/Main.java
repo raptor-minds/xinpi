@@ -26,7 +26,7 @@ public class Main {
         ExcelWriter.createExcel("./test2.xls", "sheet1", title);
 
         System.out.println(ExcelWriter.getNameAndNo());
-//        HtmlParser.parseOneInstitute("911101010975549066");
+//        HtmlParser.parseOneInstitute("91310114320741086K");
         HtmlParser.writeAllCompanyInfo();
         System.out.println("-------------SUMMARY------------");
         int total = HtmlParser.succeedNum + HtmlParser.failNum;

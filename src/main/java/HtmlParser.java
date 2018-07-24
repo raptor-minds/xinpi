@@ -17,7 +17,7 @@ public class HtmlParser {
     public static Set<String> allCompany = new HashSet<String>();
 
     private static Set<String> getSinglePageCompanyNo(int page) {
-        Set<String> companyIds = new HashSet<String>();
+        Set<String> companyIds = new LinkedHashSet<String>();
 //        String result = HttpClientHelper.httpsRequest(originUrl + page, "GET",null);
         String result = HttpClientHelper.sendGet(originUrl + page,null);
         Document doc = Jsoup.parse(result);
@@ -35,7 +35,7 @@ public class HtmlParser {
     }
 
     public static Set<String> getAllCompanyIds() {
-        Set<String> companyIds = new HashSet<String>();
+        Set<String> companyIds = new LinkedHashSet<String>();
         for (int i = 1; i < ExcelWriter.htmlPageNo; i++) {
             Set<String> temp = getSinglePageCompanyNo(i);
             companyIds.addAll(temp);
@@ -44,7 +44,7 @@ public class HtmlParser {
     }
 
     public static void writeAllCompanyInfo() {
-        Set<String> companyIds = new HashSet<String>();
+        Set<String> companyIds = new LinkedHashSet<String>();
         for (int i = 1; i < ExcelWriter.htmlPageNo; i++) {
             Set<String> temp = getSinglePageCompanyNo(i);
             companyIds.addAll(temp);
@@ -66,7 +66,7 @@ public class HtmlParser {
         Document doc = (Document) Jsoup.parse(result);
 
         Elements divs = doc.select("div#site-plate");
-        List<String> comNames = new ArrayList<String>();
+        List<String> comNames = new LinkedList<String>();
         //String companyName = divs.select("tr").get(1).select("td").get(1).text();
         String companyName = url;
         comNames.add(companyName);
