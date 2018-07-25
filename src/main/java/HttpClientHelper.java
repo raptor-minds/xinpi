@@ -42,7 +42,7 @@ public class HttpClientHelper {
 
             //读取服务器端返回的内容
             InputStream is=conn.getInputStream();
-            InputStreamReader isr=new InputStreamReader(is,"UTF-8");
+            InputStreamReader isr=new InputStreamReader(is,"GBK");
             BufferedReader br=new BufferedReader(isr);
             buffer=new StringBuffer();
             String line=null;

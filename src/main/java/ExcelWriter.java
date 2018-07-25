@@ -24,7 +24,12 @@ public class ExcelWriter {
         }
         //流
         FileOutputStream out = null;
-        HSSFSheet sheet = workbook.getSheet("sheet2");
+        HSSFSheet sheet = null;
+        if (HtmlParser.isNewVersion) {
+            sheet = workbook.getSheet("sheet2");
+        }else {
+            sheet = workbook.getSheet("sheet5");
+        }
         // 获取表格的总行数
         int colCount = sheet.getRow(0).getLastCellNum(); // 需要加一
 

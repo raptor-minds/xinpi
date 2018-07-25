@@ -7,9 +7,15 @@ import java.util.*;
 
 public class HtmlParser {
 
-    private static String domainName = "dp2.nifa.org.cn";
-    private static String baseUrl = "http://" + domainName + "/HomePage?method=getTargetOrgInfo&sorganation=";
-    private static String originUrl = "http://" + domainName + "/publicnifa/HomePage?method=getOperateInfo&currentPage=";
+    public final static boolean isNewVersion = false;
+    private final static String newDomainName = "dp2.nifa.org.cn";
+    private final static String oldDomainName = "dp.nifa.org.cn";
+    private final static String baseUrl = isNewVersion ?
+            "http://" + newDomainName + "/HomePage?method=getTargetOrgInfo&sorganation="
+            : "https://" + oldDomainName + "/HomePage?method=getTargetOrgInfo&sorganation=";
+    private final static String originUrl = isNewVersion ?
+            "http://" + newDomainName + "/HomePage?method=getOperateInfo&currentPage="
+            : "https://" + oldDomainName + "/HomePage?method=getOperateInfo&currentPage=";
     public static int succeedNum = 0;
     public static int failNum = 0;
     public static Set<String> badCompany = new HashSet<String>();
@@ -18,15 +24,19 @@ public class HtmlParser {
 
     private static Set<String> getSinglePageCompanyNo(int page) {
         Set<String> companyIds = new LinkedHashSet<String>();
-//        String result = HttpClientHelper.httpsRequest(originUrl + page, "GET",null);
-        String result = HttpClientHelper.sendGet(originUrl + page,null);
+        String result;
+        if (!isNewVersion) {
+            result = HttpClientHelper.httpsRequest(originUrl + page, "GET", null);
+        } else {
+            result = HttpClientHelper.sendGet(originUrl + page, null);
+        }
         Document doc = Jsoup.parse(result);
 
         Elements divs = doc.select("tbody#runinfotbody").select("a");
         for (Element element : divs) {
             String base = element.toString();
             int begin = base.indexOf("sorganation=");
-            int end = base.indexOf("&amp;location=");
+            int end = base.indexOf("\" class=");
             String companyId = base.substring(begin + 12, end);
             companyIds.add(companyId);
         }
@@ -55,18 +65,21 @@ public class HtmlParser {
     }
 
     public static void parseOneInstitute(String url) {
-//        String result = HttpClientHelper.httpsRequest(
-//                baseUrl + url, "GET",
-//                 null);
+        String result;
+        if (!isNewVersion) {
+            result = HttpClientHelper.httpsRequest(
+                    baseUrl + url, "GET",
+                    null);
 
-        String result = HttpClientHelper.sendGet(
-                baseUrl + url + "&location=yy#come%20here",
-                null);
+        } else {
+            result = HttpClientHelper.sendGet(
+                    baseUrl + url + "&location=yy#come%20here",
+                    null);
+        }
 
         Document doc = (Document) Jsoup.parse(result);
         Elements divBaseInfo = doc.select("div#base-info");
         String companyName = divBaseInfo.select("tr").get(1).select("td").get(1).text().trim();
-//        String companyName = "hello";
         List<String> comNames = new LinkedList<String>();
         String companyId = url;
         comNames.add(companyId);
@@ -105,14 +118,14 @@ public class HtmlParser {
             i++;
         }
 
-        if (!tradeListMap.isEmpty()){
+        if (!tradeListMap.isEmpty()) {
             allCompany.add(companyId);
         }
 
         try {
             ExcelWriter.writeToExcel("./test2.xls", "sheet1",
                     tradeListMap, comNames, dates, companyName);
-            System.out.println("successfully processed " + companyId + " " + companyName  + ".");
+            System.out.println("successfully processed " + companyId + " " + companyName + ".");
             succeedNum++;
         } catch (Exception e) {
             e.printStackTrace();
@@ -124,11 +137,11 @@ public class HtmlParser {
 
     public static void main(String[] args) {
 
-//        ExcelWriter.getHtmlPageNo();
-//        List<String> title = ExcelWriter.getTitle();
-//        ExcelWriter.getDateInfo();
-//        System.out.println(getSinglePageCompanyNo(1));
-//        writeAllCompanyInfo();
+        //        ExcelWriter.getHtmlPageNo();
+        //        List<String> title = ExcelWriter.getTitle();
+        //        ExcelWriter.getDateInfo();
+        //        System.out.println(getSinglePageCompanyNo(1));
+        //        writeAllCompanyInfo();
         HtmlParser.parseOneInstitute("91110000095356957P");
     }
 }
