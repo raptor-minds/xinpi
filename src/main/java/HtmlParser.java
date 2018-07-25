@@ -66,7 +66,6 @@ public class HtmlParser {
         Document doc = (Document) Jsoup.parse(result);
         Elements divBaseInfo = doc.select("div#base-info");
         String companyName = divBaseInfo.select("tr").get(1).select("td").get(1).text().trim();
-
 //        String companyName = "hello";
         List<String> comNames = new LinkedList<String>();
         String companyId = url;

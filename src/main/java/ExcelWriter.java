@@ -5,7 +5,7 @@ import java.util.*;
 
 public class ExcelWriter {
     private static HSSFWorkbook workbook = null;
-    public static List<String> title = new ArrayList<String>();
+    private static List<String> title = new ArrayList<String>();
     public static List<String> dates = new ArrayList<String>();
     private static int monthNums = 0;
     public static int htmlPageNo = 2;
@@ -262,6 +262,7 @@ public class ExcelWriter {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         //流
         FileOutputStream out = null;
         HSSFSheet sheet = workbook.getSheet(sheetName);
@@ -284,7 +285,7 @@ public class ExcelWriter {
             for (int rowId = 0; rowId < dataMap.size(); rowId++) {
                 HSSFRow newRow = sheet.createRow(rowId + rowCount + 1);
                 //company name
-                if (rowId % 3 == 0) {
+                if (rowId == 0) {
                     String companyId = companyIDs.get((rowId / monthNums)).trim().toUpperCase();
                     HSSFCell cell = newRow.createCell(0);
                     cell.setCellStyle(cellStyle);
