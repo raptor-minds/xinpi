@@ -3,13 +3,27 @@ import org.apache.poi.hssf.usermodel.*;
 import java.io.*;
 import java.util.*;
 
+/**
+ * The type Excel writer.
+ */
 public class ExcelWriter {
     private static HSSFWorkbook workbook = null;
     private static List<String> title = new ArrayList<String>();
+    /**
+     * The constant dates.
+     */
     public static List<String> dates = new ArrayList<String>();
     private static int monthNums = 0;
+    /**
+     * The constant htmlPageNo.
+     */
     public static int htmlPageNo = 2;
 
+    /**
+     * Gets title.
+     *
+     * @return the title
+     */
     public static List<String> getTitle() {
 
         File file = new File("./companyNames.xls");
@@ -27,7 +41,7 @@ public class ExcelWriter {
         HSSFSheet sheet = null;
         if (HtmlParser.isNewVersion) {
             sheet = workbook.getSheet("sheet2");
-        }else {
+        } else {
             sheet = workbook.getSheet("sheet5");
         }
         // 获取表格的总行数
@@ -41,6 +55,11 @@ public class ExcelWriter {
         return title;
     }
 
+    /**
+     * Gets date info.
+     *
+     * @return the date info
+     */
     public static List<String> getDateInfo() {
 
         File file = new File("./companyNames.xls");
@@ -67,6 +86,11 @@ public class ExcelWriter {
     }
 
 
+    /**
+     * Gets html page no.
+     *
+     * @return the html page no
+     */
     public static int getHtmlPageNo() {
 
         File file = new File("./companyNames.xls");
@@ -94,7 +118,7 @@ public class ExcelWriter {
      * @param fileDir
      *         文件路径
      *
-     * @return
+     * @return boolean boolean
      */
     public static boolean fileExist(String fileDir) {
         boolean flag = false;
@@ -111,7 +135,9 @@ public class ExcelWriter {
      * @param sheetName
      *         表格索引名
      *
-     * @return
+     * @return boolean boolean
+     * @throws Exception
+     *         the exception
      */
     public static boolean sheetExist(String fileDir, String sheetName) throws Exception {
         boolean flag = false;
@@ -144,6 +170,9 @@ public class ExcelWriter {
      *         要创建的表格索引
      * @param titleRow
      *         excel的第一行即表格头
+     *
+     * @throws Exception
+     *         the exception
      */
     public static void createExcel(String fileDir, String sheetName, List<String> titleRow) throws Exception {
         //创建workbook
@@ -183,6 +212,8 @@ public class ExcelWriter {
      *
      * @param fileDir
      *         文件路径
+     *
+     * @return the boolean
      */
     public static boolean deleteExcel(String fileDir) {
         boolean flag = false;
@@ -207,8 +238,11 @@ public class ExcelWriter {
      *         文件路径
      * @param sheetName
      *         表格索引
+     * @param mapList
+     *         the map list
      *
      * @throws Exception
+     *         the exception
      */
     public static void writeToExcel(String fileDir, String sheetName, List<Map> mapList) throws Exception {
         //创建workbook
@@ -255,6 +289,25 @@ public class ExcelWriter {
         }
     }
 
+    /**
+     * Write to excel.
+     *
+     * @param fileDir
+     *         the file dir
+     * @param sheetName
+     *         the sheet name
+     * @param dataMap
+     *         the data map
+     * @param companyIDs
+     *         the company i ds
+     * @param dates
+     *         the dates
+     * @param companyName
+     *         the company name
+     *
+     * @throws Exception
+     *         the exception
+     */
     public static void writeToExcel(String fileDir, String sheetName,
                                     Map<Integer, List<String>> dataMap,
                                     List<String> companyIDs, List<String> dates, String companyName) throws Exception {
@@ -303,10 +356,10 @@ public class ExcelWriter {
                 //trade date
                 newRow.createCell(2).setCellValue(dates.get(rowId));
                 List<String> cols = dataMap.get(HtmlParser.monthIds.get(rowId));
-                if (cols == null || cols.isEmpty()){
+                if (cols == null || cols.isEmpty()) {
                     continue;
                 }
-                for (short columnIndex = 0; columnIndex < columnCount - 3 && columnIndex <cols.size(); columnIndex++) {  //遍历表头
+                for (short columnIndex = 0; columnIndex < columnCount - 3 && columnIndex < cols.size(); columnIndex++) {  //遍历表头
                     HSSFCell cell = newRow.createCell(columnIndex + 3, 0);
                     if (cols.get(columnIndex) != null && !cols.get(columnIndex).isEmpty()) {
                         cell.setCellValue(Double.valueOf(cols.get(columnIndex)));
@@ -330,6 +383,15 @@ public class ExcelWriter {
         }
     }
 
+    /**
+     * The entry point of application.
+     *
+     * @param args
+     *         the input arguments
+     *
+     * @throws Exception
+     *         the exception
+     */
     public static void main(String[] args) throws Exception {
         //        判断文件是否存在
         //        System.out.println(sheetExist("./src/main/resources/Book1.xls", "Sheet1"))
