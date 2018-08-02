@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * The type Merge data.
+ */
 public final class MergeData {
 
     private static List<String> newHead = new LinkedList<String>();
@@ -49,12 +52,7 @@ public final class MergeData {
             oldColCount++;
         }
 
-        int newColCount = 0;
-        while (!newSheet.getRow(0).getCell(newColCount).getStringCellValue().isEmpty()) {
-            newHead.add(newSheet.getRow(0).getCell(newColCount).getStringCellValue());
-            newColCount++;
-        }
-
+        int newColCount = 34;
 
         for (int i = 0; i < rowCount; i++) {
             matchValue.add(matchSheet.getRow(i).getCell(0).getStringCellValue());
@@ -73,6 +71,12 @@ public final class MergeData {
 
     }
 
+    /**
+     * The entry point of application.
+     *
+     * @param args
+     *         the input arguments
+     */
     public static void main(String[] args) {
         getTitle();
         for (int i = 0; i < newHead.size(); i++) {
