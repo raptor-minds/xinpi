@@ -85,9 +85,14 @@ public final class MergeData {
 
     }
 
-    public static void exchange2column(int indexOrigin, int indexDes) {
-
-        File file = new File("./resources/test.xls");
+    /**
+     * Swap all columns in the new excel.
+     *
+     * @param newHeadChangedIndex
+     *         the new head changed index
+     */
+    public static void swapAllColumnsInTheNewExcel(List<Integer> newHeadChangedIndex) {
+        File file = new File("./resources/new.xls");
         if (!file.exists()) {
             System.out.println("test doesn't exist.");
         }
@@ -100,20 +105,69 @@ public final class MergeData {
         //流
         FileOutputStream out = null;
 
+        assert workbook != null;
         HSSFSheet newSheet = workbook.getSheet("sheet1");
 
         int rowCount = newSheet.getLastRowNum() + 1;
 
-        // do swapping
-        for (int i = 0; i < rowCount; i++) {
-            Cell originCell = newSheet.getRow(i).getCell(indexOrigin);
-            Cell desCell = newSheet.getRow(i).getCell(indexDes);
+        for (int indexOrigin = 0; indexOrigin < newHeadChangedIndex.size(); indexOrigin++) {
+            int indexDes = newHeadChangedIndex.get(indexOrigin);
+
+            if (indexOrigin == indexDes) {
+                continue;
+            }
+
+            String tempHead = "";
+            // do swapping
+
+            // swap header
+            Cell originHeadCell = newSheet.getRow(0).getCell(indexOrigin);
+            Cell desHeadCell = newSheet.getRow(0).getCell(indexDes);
             DataFormatter dataFormatter = new DataFormatter();
-            String originStr = dataFormatter.formatCellValue(originCell);
-            String temp = String.copyValueOf(originStr.toCharArray());
-            String desStr = dataFormatter.formatCellValue(desCell);
-            originCell.setCellValue(desStr);
-            desCell.setCellValue(temp);
+            String originHeadStr = dataFormatter.formatCellValue(originHeadCell);
+            tempHead = String.copyValueOf(originHeadStr.toCharArray());
+            String desHeadStr = dataFormatter.formatCellValue(desHeadCell);
+
+            if (desHeadCell == null) {
+                desHeadCell = newSheet.getRow(0).createCell(indexDes);
+                desHeadCell.setCellValue(tempHead);
+            }
+
+            if (originHeadCell == null) {
+                originHeadCell = newSheet.getRow(0).createCell(indexOrigin);
+                originHeadCell.setCellValue(String.valueOf(desHeadStr));
+            }
+
+            // swap data under header
+            Double temp = null, desValue = null;
+            for (int i = 1; i < rowCount; i++) {
+                Cell originCell = newSheet.getRow(i).getCell(indexOrigin);
+                Cell desCell = newSheet.getRow(i).getCell(indexDes);
+
+                temp = getCell(newSheet, temp, i, originCell);
+
+                desValue = getCell(newSheet, desValue, i, desCell);
+
+                if (desCell == null) {
+                    desCell = newSheet.getRow(i).createCell(indexDes);
+                }
+
+                if (originCell == null) {
+                    originCell = newSheet.getRow(i).createCell(indexOrigin);
+                }
+
+                if (desValue != null) {
+                    originCell.setCellValue(desValue);
+                } else {
+                    originCell.setCellValue("");
+                }
+
+                if (temp != null) {
+                    desCell.setCellValue(temp);
+                } else {
+                    desCell.setCellValue("");
+                }
+            }
         }
 
         try {
@@ -127,12 +181,25 @@ public final class MergeData {
             }
         } finally {
             try {
+                assert out != null;
                 out.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
+
+    private static Double getCell(HSSFSheet newSheet, Double temp, int i, Cell cell) {
+        if (cell != null) {
+            try {
+                temp = cell.getNumericCellValue();
+            } catch (Exception e) {
+                temp = null;
+            }
+        }
+        return temp;
+    }
+
 
     /**
      * The entry point of application.
@@ -151,5 +218,9 @@ public final class MergeData {
         for (int i = 0; i < newHeadChangedIndex.size(); i++) {
             System.out.print("index" + i + " " + newHeadChangedIndex.get(i) + " ");
         }
+
+        swapAllColumnsInTheNewExcel(newHeadChangedIndex);
     }
+
+
 }
