@@ -1,4 +1,6 @@
 import org.apache.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -20,6 +22,8 @@ public final class MergeData {
     private static List<String> newHead = new LinkedList<String>();
     private static List<String> oldHead = new LinkedList<String>();
     private static List<String> matchValue = new LinkedList<String>();
+
+    // the new head changed index contain the first three columns in the new head.
     private static List<Integer> newHeadChangedIndex = new LinkedList<Integer>();
     private static Logger log = Logger.getLogger(MergeData.class.getName());
 
@@ -87,6 +91,148 @@ public final class MergeData {
 
     }
 
+    private static void mergePerInstitute() {
+
+    }
+
+
+    private static void writeAllNewExcelByNewIndexHead(List<String> newHead) {
+
+        File fileNew = new File("./resources/new.xls");
+        if (!fileNew.exists()) {
+            log.error("test doesn't exist.");
+        }
+        HSSFWorkbook workbook = null;
+        try {
+            workbook = new HSSFWorkbook(new FileInputStream(fileNew));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //流
+        FileOutputStream out = null;
+
+        assert workbook != null;
+        HSSFSheet newSheet = workbook.getSheet("sheet1");
+
+        File fileMerge = new File("./resources/new_merge.xls");
+        if (!fileMerge.exists()) {
+            log.error("new merge file doesn't exist");
+        }
+
+        HSSFWorkbook workbookMerge = null;
+
+        try {
+            workbookMerge = new HSSFWorkbook(new FileInputStream(fileMerge));
+        } catch (IOException e) {
+            log.error(e);
+            e.printStackTrace();
+        }
+
+        assert workbookMerge != null;
+        HSSFSheet mergeSheet = workbookMerge.getSheet("sheet1");
+
+        int rowCount = newSheet.getLastRowNum() + 1;
+
+        for (int col = 0; col < newHead.size(); col++) {
+            for (int row = 1; row < rowCount; row++) {
+                HSSFRow writeRow = null;
+                HSSFRow readRow = workbook.getSheet("sheet1").getRow(row);
+
+                if (col == 0) {
+                    writeRow = workbookMerge.getSheet("sheet1").createRow(row);
+                } else {
+                    writeRow = workbookMerge.getSheet("sheet1").getRow(row);
+                }
+
+                HSSFCell cell = writeRow.createCell(col);
+                Cell originCell = null;
+
+                originCell = readRow.getCell(newHeadChangedIndex.get(col));
+
+                if (originCell != null) {
+
+                    if (col < 3) {
+                        try {
+                            cell.setCellValue(originCell.getStringCellValue());
+                        } catch (Exception e){
+                            cell.setCellValue("");
+                        }
+                    } else {
+                        try {
+                            cell.setCellValue(originCell.getNumericCellValue());
+                        } catch (Exception e){
+                            cell.setCellValue("");
+                        }
+
+                    }
+                }
+            }
+        }
+
+        writeToFile(fileMerge, workbookMerge, out);
+    }
+
+    private static void writeToFile(File fileNew, HSSFWorkbook workbook, FileOutputStream out) {
+        try {
+            out = new FileOutputStream(fileNew);
+            workbook.write(out);
+        } catch (Exception e) {
+            try {
+                throw e;
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        } finally {
+            try {
+                assert out != null;
+                out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    private static void writeNewExcelHead(List<String> newHead) {
+
+        String fileName = "./resources/new_merge.xls";
+
+        try {
+            if (ExcelWriter.fileExist(fileName)) {
+                ExcelWriter.deleteExcel(fileName);
+            }
+            ExcelWriter.createExcel(fileName, "sheet1", newHead);
+        } catch (Exception e) {
+            log.error(e);
+            e.printStackTrace();
+        }
+    }
+
+    private static List<String> genNewExcelHead() {
+        List<String> newExcelHead = new LinkedList<String>();
+
+        // first three elements are the fixed date info
+        for (int i = 0; i < 3; i++) {
+            newExcelHead.add(newHead.get(i));
+        }
+
+        for (int i = 3; i < matchValue.size(); i++) {
+            newExcelHead.add(matchValue.get(i - 3));
+        }
+
+        return newExcelHead;
+    }
+
+    /**
+     * Write data in the combine file.
+     */
+    public static void writeDataInTheCombineFile() {
+        String fileName = "./resources/new_merge.xls";
+        List<String> newExcelHead = genNewExcelHead();
+        writeNewExcelHead(newExcelHead);
+        writeAllNewExcelByNewIndexHead(newExcelHead);
+    }
+
     /**
      * Swap all columns in the new excel.
      *
@@ -144,7 +290,8 @@ public final class MergeData {
                 originHeadCell = newSheet.getRow(0).createCell(indexOrigin);
             }
             originHeadCell.setCellValue(String.valueOf(desHeadStr));
-            log.debug("original cell change from " + originHeadStr + " to " + desHeadStr);
+            log.debug("original cell [ " + indexOrigin + "" +
+                    " ] change from " + originHeadStr + " to [ " + indexDes + " ] " + desHeadStr);
 
             if (desHeadCell == null) {
                 desHeadCell = newSheet.getRow(0).createCell(indexDes);
@@ -181,23 +328,7 @@ public final class MergeData {
                     desCell.setCellValue("");
                 }
             }
-            try {
-                out = new FileOutputStream(file);
-                workbook.write(out);
-            } catch (Exception e) {
-                try {
-                    throw e;
-                } catch (Exception e1) {
-                    e1.printStackTrace();
-                }
-            } finally {
-                try {
-                    assert out != null;
-                    out.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            writeToFile(file, workbook, out);
         }
 
 
@@ -225,10 +356,10 @@ public final class MergeData {
             for (int i = 0; i < 42; i++) {
                 Cell cell = newSheet.getRow(0).getCell(i);
                 if (cell != null) {
-                    System.out.print(cell.getStringCellValue() + "  ");
+                    System.out.print("[ " + i + " ] " + cell.getStringCellValue() + "  ");
                     count++;
                 } else {
-                    System.out.print(" hello world ");
+                    System.out.print("[ " + i + " ] hello world ");
                 }
                 if (i % 10 == 0) {
                     System.out.println();
@@ -239,10 +370,10 @@ public final class MergeData {
             for (int i = 0; i < indexList.size(); i++) {
                 Cell cell = newSheet.getRow(0).getCell(indexList.get(i));
                 if (cell != null) {
-                    System.out.print(cell.getStringCellValue() + "  ");
+                    System.out.print("[ " + i + " ] " + cell.getStringCellValue() + "  ");
                     count++;
                 } else {
-                    System.out.print(" hello world ");
+                    System.out.print("[ " + i + " ] hello world ");
                 }
                 if (i % 10 == 0) {
                     System.out.println();
@@ -271,24 +402,27 @@ public final class MergeData {
      *         the input arguments
      */
     public static void main(String[] args) {
-        log.debug("hello world");
-        log.error("hello error");
-//        getTitle();
-//        for (int i = 0; i < newHead.size(); i++) {
-//            System.out.println(i + "  " + newHeadChangedIndex.get(i));
-//            System.out.println(newHeadChangedIndex.get(i) >= 40 ? " " : newHead.get(newHeadChangedIndex.get(i)));
-//            System.out.println(i >= oldHead.size() ? " " : oldHead.get(i));
-//        }
-//
-//        for (int i = 0; i < newHeadChangedIndex.size(); i++) {
-//            System.out.print("index" + i + " " + newHeadChangedIndex.get(i) + " ");
-//        }
-//
-//        printExcelHead("new_back.xls", newHeadChangedIndex);
-//
-//        printExcelHead("new.xls", new ArrayList<Integer>());
-//        swapAllColumnsInTheNewExcel(newHeadChangedIndex);
-//        printExcelHead("new.xls", new ArrayList<Integer>());
+        getTitle();
+        //        for (int i = 0; i < newHead.size(); i++) {
+        //            System.out.println(i + "  " + newHeadChangedIndex.get(i));
+        //            System.out.println(newHeadChangedIndex.get(i) >= 38 ? " " : newHead.get(newHeadChangedIndex.get(i)));
+        //            System.out.println(i >= oldHead.size() ? " " : oldHead.get(i));
+        //        }
+
+        System.out.println("\n ******************** \n");
+        for (int i = 0; i < newHeadChangedIndex.size(); i++) {
+            System.out.print("index" + i + " " + newHeadChangedIndex.get(i) + " ");
+        }
+
+        //        printExcelHead("new_back.xls", newHeadChangedIndex);
+        //
+        //        printExcelHead("new.xls", new ArrayList<Integer>());
+        //        swapAllColumnsInTheNewExcel(newHeadChangedIndex);
+        //        printExcelHead("new.xls", new ArrayList<Integer>());
+        //
+        //        System.out.println(genNewExcelHead());
+
+        writeDataInTheCombineFile();
     }
 
 

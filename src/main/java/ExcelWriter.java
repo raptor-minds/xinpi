@@ -275,6 +275,10 @@ public class ExcelWriter {
                 }
             }
         }
+        wirteToWorkBook(fileDir, out);
+    }
+
+    private static void wirteToWorkBook(String fileDir, FileOutputStream out) throws Exception {
         try {
             out = new FileOutputStream(fileDir);
             workbook.write(out);
@@ -369,18 +373,7 @@ public class ExcelWriter {
                 }
             }
         }
-        try {
-            out = new FileOutputStream(fileDir);
-            workbook.write(out);
-        } catch (Exception e) {
-            throw e;
-        } finally {
-            try {
-                out.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        wirteToWorkBook(fileDir, out);
     }
 
     /**
