@@ -36,7 +36,7 @@ public class HtmlParser {
         for (Element element : divs) {
             String base = element.toString();
             int begin = base.indexOf("sorganation=");
-            int end = base.indexOf("\" class=");
+            int end = base.indexOf("&amp;location=yy");
             String companyId = base.substring(begin + 12, end);
             companyIds.add(companyId);
         }
@@ -87,7 +87,8 @@ public class HtmlParser {
 
 
         Map<Integer, List<String>> tradeListMap = new HashMap<Integer, List<String>>();
-        Elements tradeLog = doc.select("div#trade-log");
+        //Elements tradeLog = doc.select("div#trade-log");
+        Elements tradeLog = doc.select("div#out-info");
         List<String> dates = new LinkedList<String>();
         Elements tables = tradeLog.select("table");
 

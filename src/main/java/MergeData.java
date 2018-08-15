@@ -18,7 +18,7 @@ import java.util.List;
 public final class MergeData {
 
     private static int noChange = 38;
-    private static boolean needGenNewMergeFile = false;
+    private static boolean needGenNewMergeFile = true;
     private static List<String> newHead = new LinkedList<String>();
     private static List<String> oldHead = new LinkedList<String>();
     private static List<String> matchValue = new LinkedList<String>();
