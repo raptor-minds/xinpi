@@ -23,6 +23,8 @@ public final class MergeData {
     private static List<String> oldHead = new LinkedList<String>();
     private static List<String> matchValue = new LinkedList<String>();
 
+    private static String[] titles = {" 笔均融资金额(万元)", "历史项目逾期金额(万元)", "历史项目逾期率(%)"};
+
     // the new head changed index contain the first three columns in the new head.
     private static List<Integer> newHeadChangedIndex = new LinkedList<Integer>();
     private static Logger log = Logger.getLogger(MergeData.class.getName());
@@ -139,7 +141,7 @@ public final class MergeData {
         for (int i = 0; i < instituteList.size() - 1; i++) {
             Institute institute = instituteList.get(i);
             institute.setEnd(instituteList.get(i + 1).getBegin() - 1);
-            institute.setLength(institute.getEnd() - institute.getBegin());
+            institute.setLength(institute.getEnd() - institute.getBegin() + 1);
         }
 
         return instituteList;
@@ -343,6 +345,13 @@ public final class MergeData {
     private static void writeNewExcelHead(List<String> newHead, String fileName) {
 
         String fileName1 = "./resources/" + fileName;
+
+        int count = 0;
+        for (int i = 0; i < newHead.size(); i++) {
+            if (newHead.get(i).isEmpty()){
+                newHead.set(i, titles[count++]);
+            }
+        }
 
         try {
             if (ExcelWriter.fileExist(fileName)) {
