@@ -87,7 +87,7 @@ public class HtmlParser {
 
 
         Map<Integer, List<String>> tradeListMap = new HashMap<Integer, List<String>>();
-        //Elements tradeLog = doc.select("div#trade-log");
+//        Elements tradeLog = doc.select("div#trade-log");
         Elements tradeLog = doc.select("div#out-info");
         List<String> dates = new LinkedList<String>();
         Elements tables = tradeLog.select("table");
@@ -97,7 +97,7 @@ public class HtmlParser {
         for (Element element : tables.get(0).children().select("tr")) {
             String date = element.select("td").text();
             // first line is trash
-            if (i != 0 && ExcelWriter.dates.contains(date)) {
+            if (i != 0 && ExcelWriter.dates.contains(date) && !dates.contains(date)) {
                 monthIds.add(i);
                 dates.add(date);
             }

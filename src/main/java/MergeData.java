@@ -117,7 +117,7 @@ public final class MergeData {
 
         for (int i = 1; i < rowCount; i++) {
             HSSFRow readRow = workbookMerge.getSheet("sheet1").getRow(i);
-            Cell cell = readRow.getCell(0);
+            Cell cell = readRow.getCell(1);
             String instituteName;
 
             if (cell != null) {

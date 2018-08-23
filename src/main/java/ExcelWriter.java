@@ -39,7 +39,7 @@ public class ExcelWriter {
         //流
         FileOutputStream out = null;
         HSSFSheet sheet = null;
-        if (HtmlParser.isNewVersion) {
+        if (!HtmlParser.isNewVersion) {
             sheet = workbook.getSheet("sheet2");
         } else {
             sheet = workbook.getSheet("sheet5");
@@ -349,14 +349,11 @@ public class ExcelWriter {
                 //company name
                 if (rowId == 0) {
                     String companyId = companyIDs.get((rowId / monthNums)).trim().toUpperCase();
-                    HSSFCell cell = newRow.createCell(0);
-                    cell.setCellStyle(cellStyle);
-                    cell.setCellValue(companyName);
                     newRow.createCell(1).setCellValue(companyId);
                 } else {
-                    newRow.createCell(0).setCellValue("");
                     newRow.createCell(1).setCellValue("");
                 }
+                newRow.createCell(0).setCellValue(companyName);
                 //trade date
                 newRow.createCell(2).setCellValue(dates.get(rowId));
                 List<String> cols = dataMap.get(HtmlParser.monthIds.get(rowId));
