@@ -7,15 +7,15 @@ import java.util.*;
 
 public class HtmlParser {
 
-    public static boolean isNewVersion = false;
-    private final static String newDomainName = "dp2.nifa.org.cn";
-    private final static String oldDomainName = "dp.nifa.org.cn";
+    public static boolean isNewVersion = true;
+    private final static String newDomainName = "dp.nifa.org.cn";
+    private final static String oldDomainName = "dp2.nifa.org.cn";
     private final static String baseUrl = isNewVersion ?
-            "http://" + newDomainName + "/HomePage?method=getTargetOrgInfo&sorganation="
-            : "https://" + oldDomainName + "/HomePage?method=getTargetOrgInfo&sorganation=";
+            "https://" + newDomainName + "/HomePage?method=getTargetOrgInfo&sorganation="
+            : "http://" + oldDomainName + "/HomePage?method=getTargetOrgInfo&sorganation=";
     private final static String originUrl = isNewVersion ?
-            "http://" + newDomainName + "/HomePage?method=getOperateInfo&currentPage="
-            : "https://" + oldDomainName + "/HomePage?method=getOperateInfo&currentPage=";
+            "https://" + newDomainName + "/HomePage?method=getOperateInfo&currentPage="
+            : "http://" + oldDomainName + "/HomePage?method=getOperateInfo&currentPage=";
     public static int succeedNum = 0;
     public static int failNum = 0;
     public static Set<String> badCompany = new HashSet<String>();
@@ -26,7 +26,6 @@ public class HtmlParser {
         Set<String> companyIds = new LinkedHashSet<String>();
         String result;
         result = HttpClientHelper.httpsRequest(originUrl + page, "GET", null);
-
         Document doc = Jsoup.parse(result);
 
         Elements divs = doc.select("tbody#runinfotbody").select("a");

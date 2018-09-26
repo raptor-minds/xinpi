@@ -26,7 +26,18 @@ public class Main {
         ExcelWriter.createExcel("./test2.xls", "sheet1", title);
 
         //        HtmlParser.parseOneInstitute("91110105317977127Q");
-        HtmlParser.isNewVersion = args.length == 0 || !args.equals("old");
+        String isNewV = System.getProperty("para");
+
+        if (isNewV != null) {
+            HtmlParser.isNewVersion = !isNewV.equals("old");
+        }
+
+        if (HtmlParser.isNewVersion) {
+            System.out.println("this is new version");
+        } else {
+            System.out.println("this is old version");
+        }
+
         HtmlParser.writeAllCompanyInfo();
         System.out.println("-------------SUMMARY------------");
         int total = HtmlParser.succeedNum + HtmlParser.failNum;
