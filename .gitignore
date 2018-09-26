@@ -5,3 +5,4 @@ target/*
 test2.xls
 resources/
 log/
+.gradle

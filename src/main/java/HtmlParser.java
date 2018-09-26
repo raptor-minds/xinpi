@@ -7,7 +7,7 @@ import java.util.*;
 
 public class HtmlParser {
 
-    public final static boolean isNewVersion = false;
+    public static boolean isNewVersion = false;
     private final static String newDomainName = "dp2.nifa.org.cn";
     private final static String oldDomainName = "dp.nifa.org.cn";
     private final static String baseUrl = isNewVersion ?
@@ -25,11 +25,8 @@ public class HtmlParser {
     private static Set<String> getSinglePageCompanyNo(int page) {
         Set<String> companyIds = new LinkedHashSet<String>();
         String result;
-        if (!isNewVersion) {
-            result = HttpClientHelper.httpsRequest(originUrl + page, "GET", null);
-        } else {
-            result = HttpClientHelper.sendGet(originUrl + page, null);
-        }
+        result = HttpClientHelper.httpsRequest(originUrl + page, "GET", null);
+
         Document doc = Jsoup.parse(result);
 
         Elements divs = doc.select("tbody#runinfotbody").select("a");
@@ -66,16 +63,10 @@ public class HtmlParser {
 
     public static void parseOneInstitute(String url) {
         String result;
-        if (!isNewVersion) {
-            result = HttpClientHelper.httpsRequest(
-                    baseUrl + url, "GET",
-                    null);
 
-        } else {
-            result = HttpClientHelper.sendGet(
-                    baseUrl + url + "&location=yy#come%20here",
-                    null);
-        }
+        result = HttpClientHelper.httpsRequest(
+                baseUrl + url, "GET",
+                null);
 
         Document doc = (Document) Jsoup.parse(result);
         Elements divBaseInfo = doc.select("div#base-info");
@@ -87,8 +78,12 @@ public class HtmlParser {
 
 
         Map<Integer, List<String>> tradeListMap = new HashMap<Integer, List<String>>();
-//        Elements tradeLog = doc.select("div#trade-log");
-        Elements tradeLog = doc.select("div#out-info");
+        Elements tradeLog = null;
+        if (isNewVersion) {
+            tradeLog = doc.select("div#trade-log");
+        } else {
+            tradeLog = doc.select("div#out-info");
+        }
         List<String> dates = new LinkedList<String>();
         Elements tables = tradeLog.select("table");
 
