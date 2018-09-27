@@ -20,12 +20,7 @@ public class Main {
         ExcelWriter.deleteExcel("./test2.xls");
 
         System.out.println(ExcelWriter.getHtmlPageNo());
-        List<String> title = ExcelWriter.getTitle();
-        ExcelWriter.getDateInfo();
 
-        ExcelWriter.createExcel("./test2.xls", "sheet1", title);
-
-        //        HtmlParser.parseOneInstitute("91110105317977127Q");
         String isNewV = System.getProperty("para");
 
         if (isNewV != null) {
@@ -37,6 +32,13 @@ public class Main {
         } else {
             System.out.println("this is old version");
         }
+
+        List<String> title = ExcelWriter.getTitle();
+        ExcelWriter.getDateInfo();
+
+        ExcelWriter.createExcel("./test2.xls", "sheet1", title);
+
+        //        HtmlParser.parseOneInstitute("91110105317977127Q");
 
         HtmlParser.writeAllCompanyInfo();
         System.out.println("-------------SUMMARY------------");
