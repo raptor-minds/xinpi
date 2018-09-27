@@ -39,7 +39,7 @@ public class ExcelWriter {
         //流
         FileOutputStream out = null;
         HSSFSheet sheet = null;
-        if (!HtmlParser.isNewVersion) {
+        if (HtmlParser.isNewVersion) {
             sheet = workbook.getSheet("sheet2");
         } else {
             sheet = workbook.getSheet("sheet5");
