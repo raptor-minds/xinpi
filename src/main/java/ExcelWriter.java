@@ -362,7 +362,9 @@ public class ExcelWriter {
                 }
                 for (short columnIndex = 0; columnIndex < columnCount - 3 && columnIndex < cols.size(); columnIndex++) {  //遍历表头
                     HSSFCell cell = newRow.createCell(columnIndex + 3, 0);
-                    if (cols.get(columnIndex) != null && !cols.get(columnIndex).isEmpty()) {
+                    if (columnIndex == 0) {
+                        cell.setCellValue(cols.get(0));
+                    }else if (cols.get(columnIndex) != null && !cols.get(columnIndex).isEmpty()) {
                         cell.setCellValue(Double.valueOf(cols.get(columnIndex)));
                     } else {
                         cell.setCellValue("");

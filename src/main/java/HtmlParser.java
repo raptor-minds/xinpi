@@ -84,16 +84,18 @@ public class HtmlParser {
             tradeLog = doc.select("div#out-info");
         }
         List<String> dates = new LinkedList<String>();
+        List<String> reportDates = new LinkedList<String>();
         Elements tables = tradeLog.select("table");
 
-        int i = 0;
+        int i = 0, j=0;
         // left table is date info
         for (Element element : tables.get(0).children().select("tr")) {
-            String date = element.select("td").text();
+            String date = element.select("td").text().substring(0, 10);
             // first line is trash
             if (i != 0 && ExcelWriter.dates.contains(date) && !dates.contains(date)) {
                 monthIds.add(i);
                 dates.add(date);
+                reportDates.add(element.select("td").text().substring(11).trim());
             }
             i++;
         }
@@ -104,6 +106,7 @@ public class HtmlParser {
         for (Element element : tables.get(1).children().select("tr")) {
             List<String> numbers = new ArrayList<String>();
             if (i != 0 && monthIds.contains(i)) {
+                numbers.add(reportDates.get(j++));
                 for (Element e : element.select("td")) {
                     numbers.add(e.text());
                 }
