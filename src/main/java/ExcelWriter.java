@@ -446,9 +446,7 @@ public class ExcelWriter {
             for (int rowId = 0; rowId < instituteInBanks.size(); rowId++) {
                 InstituteInBank instituteInBank = instituteInBanks.get(rowId);
                 HSSFRow newRow = sheet.createRow(rowId + rowCount);
-                if (rowId == 0) {
-                    newRow.createCell(0).setCellValue(bankName);
-                }
+                newRow.createCell(0).setCellValue(bankName);
                 newRow.createCell(1).setCellValue(instituteInBank.getFullName());
                 newRow.createCell(2).setCellValue(instituteInBank.getShortName());
                 newRow.createCell(3).setCellValue(instituteInBank.getSignDate());
