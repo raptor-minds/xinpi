@@ -55,6 +55,36 @@ public class ExcelWriter {
         return title;
     }
 
+    public static List<String> getTitleForBank() {
+
+        File file = new File("./companyNames.xls");
+        if (!file.exists()) {
+            System.out.println("companyNames doesn't exist.");
+        }
+        HSSFWorkbook workbook = null;
+        try {
+            workbook = new HSSFWorkbook(new FileInputStream(file));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //流
+        FileOutputStream out = null;
+        HSSFSheet sheet = null;
+
+        sheet = workbook.getSheet("sheet7");
+
+        // 获取表格的总行数
+        int colCount = sheet.getRow(0).getLastCellNum(); // 需要加一
+
+        for (int i = 0; i < colCount; i++) {
+            if (!sheet.getRow(0).getCell(i).getStringCellValue().isEmpty()) {
+                title.add(sheet.getRow(0).getCell(i).getStringCellValue());
+            }
+        }
+        return title;
+    }
+
+
     /**
      * Gets date info.
      *
@@ -364,12 +394,68 @@ public class ExcelWriter {
                     HSSFCell cell = newRow.createCell(columnIndex + 3, 0);
                     if (columnIndex == 0) {
                         cell.setCellValue(cols.get(0));
-                    }else if (cols.get(columnIndex) != null && !cols.get(columnIndex).isEmpty()) {
+                    } else if (cols.get(columnIndex) != null && !cols.get(columnIndex).isEmpty()) {
                         cell.setCellValue(Double.valueOf(cols.get(columnIndex)));
                     } else {
                         cell.setCellValue("");
                     }
                 }
+            }
+        }
+        wirteToWorkBook(fileDir, out);
+    }
+
+
+    /**
+     * Write bank info to excel.
+     *
+     * @param fileDir
+     *         the file dir
+     * @param sheetName
+     *         the sheet name
+     * @param bankName
+     *         the bank name
+     * @param instituteInBanks
+     *         the institute in banks
+     *
+     * @throws Exception
+     *         the exception
+     */
+    public static void writeBankInfoToExcel(String fileDir, String sheetName, String bankName,
+                                            List<InstituteInBank> instituteInBanks) throws Exception {
+        //创建workbook
+        File file = new File(fileDir);
+        try {
+            workbook = new HSSFWorkbook(new FileInputStream(file));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //流
+        FileOutputStream out = null;
+        HSSFSheet sheet = workbook.getSheet(sheetName);
+        // 获取表格的总行数
+        int rowCount = sheet.getLastRowNum() + 1; // 需要加一
+        // 获取表头的列数
+        int columnCount = sheet.getRow(0).getLastCellNum();
+
+        // 获得表头行对象
+        HSSFRow titleRow = sheet.getRow(0);
+        if (titleRow != null) {
+            for (int rowId = 0; rowId < instituteInBanks.size(); rowId++) {
+                InstituteInBank instituteInBank = instituteInBanks.get(rowId);
+                HSSFRow newRow = sheet.createRow(rowId + rowCount);
+                if (rowId == 0) {
+                    newRow.createCell(0).setCellValue(bankName);
+                }
+                newRow.createCell(1).setCellValue(instituteInBank.getFullName());
+                newRow.createCell(2).setCellValue(instituteInBank.getShortName());
+                newRow.createCell(3).setCellValue(instituteInBank.getSignDate());
+                newRow.createCell(4).setCellValue(instituteInBank.getOnlineDate());
+                newRow.createCell(5).setCellValue(instituteInBank.getId());
+                newRow.createCell(6).setCellValue(instituteInBank.getStorageName());
+                newRow.createCell(7).setCellValue(instituteInBank.getStorageVersion());
             }
         }
         wirteToWorkBook(fileDir, out);
