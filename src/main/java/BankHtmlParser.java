@@ -18,7 +18,7 @@ public final class BankHtmlParser {
 
     private static Logger log = Logger.getLogger(BankHtmlParser.class.getName());
 
-    private static List<String> parseOnePage(int pageNO) {
+    public static List<String> parseOnePage(int pageNO, String url) {
         String result;
         List<String> bankList = new LinkedList<String>();
 
@@ -86,7 +86,7 @@ public final class BankHtmlParser {
 
     }
 
-    private static boolean isCurrentPageExist(int pageNO) {
+    public static boolean isCurrentPageExist(int pageNO) {
         String result;
         List<String> bankList = new LinkedList<String>();
 
@@ -104,7 +104,7 @@ public final class BankHtmlParser {
 
         ExcelWriter.deleteExcel("./test1.xls");
 
-        List<String> titles = ExcelWriter.getTitleForBank();
+        List<String> titles = ExcelWriter.getTitleForU("sheet7");
 
         try {
             ExcelWriter.createExcel("./test1.xls", "sheet1", titles);
@@ -114,7 +114,7 @@ public final class BankHtmlParser {
 
         int i = 1;
         do {
-            List<String> banksOfOnePage = parseOnePage(i);
+            List<String> banksOfOnePage = parseOnePage(i, url);
 
             for (String bank : banksOfOnePage) {
                 writeEachBank(bank);

@@ -41,7 +41,7 @@ public class Main {
 
             ExcelWriter.createExcel("./test2.xls", "sheet1", title);
 
-            //                HtmlParser.parseOneInstitute("91110105317977127Q");
+//                            HtmlParser.parseOneInstitute("91110105317977127Q");
 
             HtmlParser.writeAllCompanyInfo();
             System.out.println("-------------SUMMARY------------");

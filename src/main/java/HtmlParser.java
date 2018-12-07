@@ -9,13 +9,8 @@ public class HtmlParser {
 
     public static boolean isNewVersion = true;
     private final static String newDomainName = "dp.nifa.org.cn";
-    private final static String oldDomainName = "dp2.nifa.org.cn";
-    private final static String baseUrl = isNewVersion ?
-            "https://" + newDomainName + "/HomePage?method=getTargetOrgInfo&sorganation="
-            : "http://" + oldDomainName + "/HomePage?method=getTargetOrgInfo&sorganation=";
-    private final static String originUrl = isNewVersion ?
-            "https://" + newDomainName + "/HomePage?method=getOperateInfo&currentPage="
-            : "http://" + oldDomainName + "/HomePage?method=getOperateInfo&currentPage=";
+    private final static String baseUrl = "https://" + newDomainName + "/HomePage?method=getTargetOrgInfo&sorganation=";
+    private final static String originUrl = "https://" + newDomainName + "/HomePage?method=getOperateInfo&currentPage=";
     public static int succeedNum = 0;
     public static int failNum = 0;
     public static Set<String> badCompany = new HashSet<String>();
@@ -87,15 +82,27 @@ public class HtmlParser {
         List<String> reportDates = new LinkedList<String>();
         Elements tables = tradeLog.select("table");
 
-        int i = 0, j=0;
+        int i = 0, j = 0;
         // left table is date info
         for (Element element : tables.get(0).children().select("tr")) {
-            String date = element.select("td").text().substring(0, 10);
-            // first line is trash
-            if (i != 0 && ExcelWriter.dates.contains(date) && !dates.contains(date)) {
-                monthIds.add(i);
-                dates.add(date);
-                reportDates.add(element.select("td").text().substring(11).trim());
+
+
+            if (i != 0) {
+                if (isNewVersion) {
+                    String date = element.select("td").text().substring(0, 10);
+                    // first line is trash
+                    if (ExcelWriter.dates.contains(date) && !dates.contains(date)) {
+                        monthIds.add(i);
+                        dates.add(date);
+                        reportDates.add(element.select("td").text().substring(11).trim());
+                    }
+                } else {
+                    String date = element.select("td").text();
+                    if (ExcelWriter.dates.contains(date) && !dates.contains(date)) {
+                        monthIds.add(i);
+                        dates.add(date);
+                    }
+                }
             }
             i++;
         }
@@ -106,7 +113,9 @@ public class HtmlParser {
         for (Element element : tables.get(1).children().select("tr")) {
             List<String> numbers = new ArrayList<String>();
             if (i != 0 && monthIds.contains(i)) {
-                numbers.add(reportDates.get(j++));
+                if (isNewVersion) {
+                    numbers.add(reportDates.get(j++));
+                }
                 for (Element e : element.select("td")) {
                     numbers.add(e.text());
                 }

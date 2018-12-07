@@ -55,7 +55,7 @@ public class ExcelWriter {
         return title;
     }
 
-    public static List<String> getTitleForBank() {
+    public static List<String> getTitleForU(String sheetName) {
 
         File file = new File("./companyNames.xls");
         if (!file.exists()) {
@@ -71,7 +71,7 @@ public class ExcelWriter {
         FileOutputStream out = null;
         HSSFSheet sheet = null;
 
-        sheet = workbook.getSheet("sheet7");
+        sheet = workbook.getSheet(sheetName);
 
         // 获取表格的总行数
         int colCount = sheet.getRow(0).getLastCellNum(); // 需要加一
@@ -455,6 +455,47 @@ public class ExcelWriter {
                 newRow.createCell(6).setCellValue(instituteInBank.getStorageName());
                 newRow.createCell(7).setCellValue(instituteInBank.getStorageVersion());
             }
+        }
+        wirteToWorkBook(fileDir, out);
+    }
+
+    public static void writeBaseCompanyInfo(String fileDir, String sheetName, PlatInfo platInfo) throws Exception {
+        //创建workbook
+        File file = new File(fileDir);
+        try {
+            workbook = new HSSFWorkbook(new FileInputStream(file));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //流
+        FileOutputStream out = null;
+        HSSFSheet sheet = workbook.getSheet(sheetName);
+        // 获取表格的总行数
+        int rowCount = sheet.getLastRowNum() + 1; // 需要加一
+        // 获取表头的列数
+        int columnCount = sheet.getRow(0).getLastCellNum();
+
+        // 获得表头行对象
+        HSSFRow titleRow = sheet.getRow(0);
+        if (titleRow != null) {
+
+            HSSFRow newRow = sheet.createRow(rowCount);
+            newRow.createCell(0).setCellValue(platInfo.getCompanyId());
+            newRow.createCell(1).setCellValue(platInfo.getCompanyName());
+            newRow.createCell(2).setCellValue(platInfo.getRegCapital());
+            newRow.createCell(3).setCellValue(platInfo.getRegCountry());
+            newRow.createCell(4).setCellValue(platInfo.getRegProv());
+            newRow.createCell(5).setCellValue(platInfo.getRegCity());
+            newRow.createCell(6).setCellValue(platInfo.getOperateCountry());
+            newRow.createCell(7).setCellValue(platInfo.getOperateProv());
+            newRow.createCell(8).setCellValue(platInfo.getOperateCity());
+            newRow.createCell(9).setCellValue(platInfo.getRegDate());
+            newRow.createCell(10).setCellValue(platInfo.getRegDist());
+            newRow.createCell(11).setCellValue(platInfo.getFundDepository());
+            newRow.createCell(12).setCellValue(platInfo.getSafetyCertLevel());
+
         }
         wirteToWorkBook(fileDir, out);
     }
